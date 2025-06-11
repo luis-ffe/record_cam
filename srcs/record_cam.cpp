@@ -21,7 +21,7 @@ int main()
     string pipeline =
         "nvarguscamerasrc sensor-id=0 ! "
         "video/x-raw(memory:NVMM), width=640, height=480, format=NV12, "
-        "framerate=30/1 ! "
+        "framerate=15/1 ! "
         "nvvidconv ! video/x-raw, format=BGRx ! "
         "videoconvert ! video/x-raw, format=BGR ! "
         "appsink";
@@ -45,7 +45,7 @@ int main()
     int height = frame.rows;
 
     // Setup video writer
-    VideoWriter writer("output.avi", VideoWriter::fourcc('X','V','I','D'), 30, Size(width, height));
+    VideoWriter writer("video.avi", VideoWriter::fourcc('X','V','I','D'), 15, Size(width, height));
     if (!writer.isOpened())
     {
         cerr << "Error: Could not open video writer." << endl;
@@ -73,12 +73,13 @@ int main()
         {
             break;
         }
+        std::this_thread::sleep_for(std::chrono::milliseconds(2));
     }
 
     cap.release();
     writer.release();
     destroyAllWindows();
 
-    cout << "Video saved as 'output.avi'" << endl;
+    cout << "Video saved as 'video.avi'" << endl;
     return 0;
 }
