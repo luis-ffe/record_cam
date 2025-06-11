@@ -1,6 +1,7 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
 #include <string>
+#include <unistd.h>
 
 using namespace cv;
 using namespace std;
