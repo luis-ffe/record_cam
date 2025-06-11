@@ -5,15 +5,31 @@
 using namespace cv;
 using namespace std;
 
-int main()
+int main(int argc, char** argv)
 {
-    // Load calibration file from config folder
-    FileStorage fs("config/calibration.yml", FileStorage::READ);
+    // Default path to calibration file, assuming it's in the current working directory
+    string calibFile = "calibration.yml";
+
+    // Allow user to override via command-line argument
+    if (argc > 1)
+    {
+        calibFile = argv[1];
+    }
+
+    // Optional: print current working directory (debugging)
+    char cwd[1024];
+    if (getcwd(cwd, sizeof(cwd)) != nullptr)
+        cout << "Current working directory: " << cwd << endl;
+
+    cout << "Using calibration file: " << calibFile << endl;
+
+    FileStorage fs(calibFile, FileStorage::READ);
     if (!fs.isOpened())
     {
-        cerr << "Failed to open config/calibration.yml" << endl;
+        cerr << "Failed to open calibration file: " << calibFile << endl;
         return -1;
     }
+
     Mat cameraMatrix, distCoeffs;
     fs["CameraMatrix"] >> cameraMatrix;
     fs["DistCoeffs"] >> distCoeffs;
