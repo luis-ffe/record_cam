@@ -7,10 +7,11 @@ using namespace std;
 
 int main()
 {
-    FileStorage fs("calibration.yml", FileStorage::READ);
+    // Load calibration file from config folder
+    FileStorage fs("config/calibration.yml", FileStorage::READ);
     if (!fs.isOpened())
     {
-        cerr << "Failed to open calibration.yml" << endl;
+        cerr << "Failed to open config/calibration.yml" << endl;
         return -1;
     }
     Mat cameraMatrix, distCoeffs;
@@ -18,6 +19,7 @@ int main()
     fs["DistCoeffs"] >> distCoeffs;
     fs.release();
 
+    // GStreamer pipeline for Jetson CSI camera at 15 FPS
     string pipeline =
         "nvarguscamerasrc sensor-id=0 ! "
         "video/x-raw(memory:NVMM), width=640, height=480, format=NV12, "
@@ -44,8 +46,8 @@ int main()
     int width = frame.cols;
     int height = frame.rows;
 
-    // Setup video writer
-    VideoWriter writer("video.avi", VideoWriter::fourcc('X','V','I','D'), 15, Size(width, height));
+    // Setup video writer to save as MP4 using H264 codec
+    VideoWriter writer("video.mp4", VideoWriter::fourcc('a','v','c','1'), 15, Size(width, height));
     if (!writer.isOpened())
     {
         cerr << "Error: Could not open video writer." << endl;
@@ -69,7 +71,7 @@ int main()
         imshow("Undistorted Feed", undistorted);
 
         char key = (char)waitKey(1);
-        if (key == 'q' || key == 27) // 'q' or ESC
+        if (key == 'q' || key == 27) // 'q' or ESC to quit
         {
             break;
         }
@@ -79,6 +81,6 @@ int main()
     writer.release();
     destroyAllWindows();
 
-    cout << "Video saved as 'video.avi'" << endl;
+    cout << "Video saved as 'video.mp4'" << endl;
     return 0;
 }
