@@ -73,7 +73,6 @@ int main()
         {
             break;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(2));
     }
 
     cap.release();
